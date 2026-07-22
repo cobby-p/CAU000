@@ -1,6 +1,6 @@
 # main.py
 # 하위 프로세스 및 패키지 참조 ----------------------------------------------------
-#import knw_license
+# import knw_license
 
 import logging
 import os
@@ -9,10 +9,14 @@ import sys
 import time
 from os import environ
 from pathlib import Path
+
 from PySide6.QtCore import QThread
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMessageBox
 
+from Common.config import Config
 from Function.app_logger import configure_logging
 from Function.app_ui import get_icon_path
 from Function.app_ui import message_box
@@ -47,7 +51,9 @@ def compile_ui_for_development():
 
     compiler_path = Path(program_dir) / "Setup" / "compile_ui.py"
     if not compiler_path.is_file():
-        raise FileNotFoundError(f"GUI 변환 스크립트를 찾을 수 없습니다: {compiler_path}")
+        raise FileNotFoundError(
+            f"GUI 변환 스크립트를 찾을 수 없습니다: {compiler_path}"
+        )
 
     subprocess.run(
         [sys.executable, str(compiler_path)],
@@ -78,6 +84,8 @@ class Form(QMainWindow):
 
         # 클래스 초기화
         self.ui = setup_main_window(self, constants.PROCESS_NAME)
+        config = Config(os.path.join(program_dir, "config.ini"))
+        self.ui.lineEdit_id.setText(config.get("ldap setup", "id"))
         self.text_browser_log_handler = add_text_browser_log_handler(
             self.ui.textBrowser, self
         )
@@ -120,7 +128,9 @@ class Form(QMainWindow):
         self.close()
 
     # 프로그램 종료 시 이벤트 처리
-    def closeEvent(self, event):  # pyright: ignore[reportIncompatibleMethodOverride]
+    def closeEvent(
+        self, event
+    ):  # pyright: ignore[reportIncompatibleMethodOverride]
         if event is None:
             return
 
