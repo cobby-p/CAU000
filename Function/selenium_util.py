@@ -62,8 +62,8 @@ def create_chrome_driver(headless=False):
                 options=chrome_options,
             )
 
-            # 페이지 로딩이 끝나지 않을 경우 30초 후 예외 발생
-            driver.set_page_load_timeout(30)
+            # 페이지 로딩이 끝나지 않을 경우 Constants에 설정된 최대 시간만큼 대기
+            driver.set_page_load_timeout(constants.PAGE_LOAD_TIMEOUT)
 
             # 백그라운드 실행 여부를 로그에 표시할 문자열로 변환
             if headless:
