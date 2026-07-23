@@ -23,6 +23,8 @@ from Function.app_ui import message_box
 from Function.app_ui import setup_main_window
 from Function.app_ui_logger import add_text_browser_log_handler
 from Function.app_ui_logger import remove_text_browser_log_handler
+from Function.selenium_util import close_chrome_driver
+from Function.selenium_util import create_chrome_driver
 from Service.constants import Constants
 
 # 전역변수 할당 -----------------------------------------------------------------
@@ -45,7 +47,6 @@ logger = logging.getLogger(__name__)
 
 def compile_ui_for_development():
     """개발 환경에서 변경된 Qt Designer UI를 자동으로 변환"""
-
     if getattr(sys, "frozen", False):
         return
 
@@ -64,17 +65,35 @@ def compile_ui_for_development():
 
 # 작업을 별도의 쓰레드에서 처리하기 위한 클래스
 class Worker(QThread):
-    def __init__(self, user_id, user_pw, parent=None):
+    def __init__(self, user_id, user_pw, background=False, parent=None):
         super().__init__(parent)
         self.user_id = user_id
         self.user_pw = user_pw
+        self.background = background
+        self.error = None
 
     def run(self):
         logger.info(f"[{constants.PROCESS_NAME}] 시작")
+        driver = None
 
-        time.sleep(5)
+        try:
+            driver = create_chrome_driver(headless=self.background)
 
-        logger.info(f"[{constants.PROCESS_NAME}] 종료")
+            # 셀레니움 업무 로직을 이 영역에 작성하세요.
+            driver.get("https://www.naver.com")
+
+            time.sleep(10)
+
+        except Exception as error:
+            self.error = error
+            logger.exception(
+                f"[{constants.PROCESS_NAME}] 작업 중 오류가 발생했습니다."
+            )
+        finally:
+            close_chrome_driver(driver)
+
+        if self.error is None:
+            logger.info(f"[{constants.PROCESS_NAME}] 종료")
 
 
 class Form(QMainWindow):
@@ -98,6 +117,7 @@ class Form(QMainWindow):
         # ui에서 입력받은 값 가져오기
         user_id = self.ui.lineEdit_id.text().strip()
         user_pw = self.ui.lineEdit_pw.text().strip()
+        background = self.ui.checkBox_background.isChecked()
 
         # 계정이 입력되지 않았을 경우 예외처리
         if user_id == "" or user_pw == "":
@@ -106,13 +126,19 @@ class Form(QMainWindow):
             # 작업 실행
             self.ui.pushButton_start.setEnabled(False)
             self.ui.pushButton_start.setText("실행 중...")
+            self.ui.checkBox_background.setEnabled(False)
             try:
-                self.worker = Worker(user_id, user_pw)
+                self.worker = Worker(
+                    user_id,
+                    user_pw,
+                    background=background,
+                )
                 self.worker.finished.connect(self.on_finished)
                 self.worker.start()
             except Exception:
                 self.ui.pushButton_start.setEnabled(True)
                 self.ui.pushButton_start.setText("시작")
+                self.ui.checkBox_background.setEnabled(True)
                 logger.exception("작업 쓰레드 시작 중 오류가 발생했습니다.")
                 raise
 
@@ -120,8 +146,16 @@ class Form(QMainWindow):
     def on_finished(self):
         self.ui.pushButton_start.setEnabled(True)
         self.ui.pushButton_start.setText("시작")
+        self.ui.checkBox_background.setEnabled(True)
         self.show()
-        message_box("completed", self)
+        if self.worker.error is None:
+            message_box("completed", self)
+        else:
+            QMessageBox.critical(
+                self,
+                "오류",
+                "작업 중 오류가 발생했습니다. 로그를 확인해 주세요.",
+            )
 
     # 프로그램 종료
     def close_program(self):

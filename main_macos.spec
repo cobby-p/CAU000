@@ -71,5 +71,6 @@ app = BUNDLE(
         'CFBundleDisplayName': constants.PROCESS_NAME,
         'CFBundleShortVersionString': constants.APP_VERSION,
         'CFBundleVersion': constants.APP_VERSION,
+        'NSRequiresAquaSystemAppearance': True,
     },
 )

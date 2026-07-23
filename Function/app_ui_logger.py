@@ -1,7 +1,8 @@
 # Function/app_ui_logger.py
 import logging
 
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject
+from PySide6.QtCore import Signal
 
 
 class LogEmitter(QObject):

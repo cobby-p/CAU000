@@ -17,7 +17,18 @@
    </size>
   </property>
   <property name="styleSheet">
-   <string notr="true">QCheckBox {
+   <string notr="true">QMainWindow,
+QWidget#centralwidget {
+    background-color: rgb(255, 255, 255);
+    color: rgb(25, 28, 33);
+}
+
+QLabel {
+    background-color: transparent;
+    color: rgb(25, 28, 33);
+}
+
+QCheckBox {
     background-color: transparent;
     color: rgb(25, 28, 33);
     spacing: 6px;
@@ -191,7 +202,7 @@ QTextBrowser#textBrowser {
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>20</number>
+       <number>10</number>
       </property>
       <item>
        <widget class="QPushButton" name="pushButton_start">

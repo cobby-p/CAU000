@@ -5,11 +5,19 @@ import os
 import sys
 from pathlib import Path
 
+_QUIET_LOGGER_NAMES = (
+    "selenium",
+    "urllib3",
+)
+
 
 def configure_logging(exec_dir="", process_name=""):
     """실행 환경에 맞는 로그 경로를 정하고 파일·콘솔 로깅을 설정"""
-
-    if sys.platform == "darwin" and getattr(sys, "frozen", False) and process_name:
+    if (
+        sys.platform == "darwin"
+        and getattr(sys, "frozen", False)
+        and process_name
+    ):
         log_dir = os.path.join(Path.home(), "Library", "Logs", process_name)
     elif exec_dir:
         log_dir = os.path.join(exec_dir, "Log")
@@ -30,6 +38,10 @@ def configure_logging(exec_dir="", process_name=""):
 
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
+
+    # 외부 라이브러리의 HTTP 통신 등 상세 DEBUG 로그는 출력하지 않음
+    for logger_name in _QUIET_LOGGER_NAMES:
+        logging.getLogger(logger_name).setLevel(logging.WARNING)
 
     log_file_path = os.path.abspath(log_file)
     file_handler = None
@@ -69,7 +81,9 @@ def configure_logging(exec_dir="", process_name=""):
     if not has_console_handler:
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.DEBUG)
-        console_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+        console_handler.setFormatter(
+            logging.Formatter("%(levelname)s: %(message)s")
+        )
         root_logger.addHandler(console_handler)
 
     return log_file

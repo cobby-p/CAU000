@@ -5,14 +5,12 @@ import sys
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import (
-    QDialog,
-    QFrame,
-    QLabel,
-    QMessageBox,
-    QPushButton,
-    QVBoxLayout,
-)
+from PySide6.QtWidgets import QDialog
+from PySide6.QtWidgets import QFrame
+from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QPushButton
+from PySide6.QtWidgets import QVBoxLayout
 
 from Service.constants import Constants
 
@@ -26,7 +24,7 @@ _DIALOG_STYLE = """
         font-size: 9pt;
     }
     QFrame#dialogCard {
-        background-color: rgb(242, 242, 242);
+        background-color: rgb(255, 255, 255);
         border: 1px solid rgb(210, 210, 210);
         border-radius: 6px;
     }
@@ -94,7 +92,9 @@ def get_icon_path():
     elif sys.platform == "win32":
         icon_file = "icon.ico"
     else:
-        raise RuntimeError(f'지원하지 않는 운영체제입니다. platform={sys.platform}')
+        raise RuntimeError(
+            f"지원하지 않는 운영체제입니다. platform={sys.platform}"
+        )
 
     return os.path.join("Resource", icon_file)
 
@@ -107,14 +107,16 @@ def get_platform_name():
     elif sys.platform == "win32":
         return "Windows"
     else:
-        raise RuntimeError(f'지원하지 않는 운영체제입니다. platform={sys.platform}')
+        raise RuntimeError(
+            f"지원하지 않는 운영체제입니다. platform={sys.platform}"
+        )
 
 
 def create_dialog(parent, height):
     """공통 스타일과 크기가 적용된 모달 다이얼로그 생성"""
 
     dialog = QDialog(parent)
-    dialog.setWindowTitle('확인')
+    dialog.setWindowTitle("확인")
     dialog.setWindowIcon(QIcon(get_icon_path()))
     dialog.setModal(True)
     dialog.setWindowFlag(Qt.WindowType.Dialog)
@@ -135,7 +137,9 @@ def get_form_class():
     elif sys.platform == "win32":
         from Resource.main_windows_ui import Ui_MainWindow
     else:
-        raise RuntimeError(f'지원하지 않는 운영체제입니다. platform={sys.platform}')
+        raise RuntimeError(
+            f"지원하지 않는 운영체제입니다. platform={sys.platform}"
+        )
 
     return Ui_MainWindow
 
@@ -157,26 +161,26 @@ def setup_main_window(window, process_name):
 def message_box(message_type, parent=None):
     """메시지 유형에 맞는 계정 안내, 작업 완료, 종료 확인 다이얼로그 표시"""
 
-    if message_type == 'emptyAccount':
+    if message_type == "emptyAccount":
         dialog = create_dialog(parent, 290)
 
         card = QFrame()
-        card.setObjectName('dialogCard')
+        card.setObjectName("dialogCard")
 
         icon_label = QLabel()
         icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         icon_label.setPixmap(QIcon(get_icon_path()).pixmap(54, 54))
 
-        title_label = QLabel('계정이 입력되지 않았습니다.')
-        title_label.setObjectName('dialogTitle')
+        title_label = QLabel("계정이 입력되지 않았습니다.")
+        title_label.setObjectName("dialogTitle")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        message_label = QLabel('ID와 PW를 모두 입력해 주세요.')
-        message_label.setObjectName('dialogMessage')
+        message_label = QLabel("ID와 PW를 모두 입력해 주세요.")
+        message_label.setObjectName("dialogMessage")
         message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        acknowledge_button = QPushButton('확인')
-        acknowledge_button.setObjectName('acknowledgeButton')
+        acknowledge_button = QPushButton("확인")
+        acknowledge_button.setObjectName("acknowledgeButton")
         acknowledge_button.setFixedHeight(34)
         acknowledge_button.setDefault(True)
         acknowledge_button.setFocus()
@@ -198,27 +202,29 @@ def message_box(message_type, parent=None):
         acknowledge_button.clicked.connect(dialog.accept)
         dialog.exec()
 
-    elif message_type == 'completed':
+    elif message_type == "completed":
         dialog = create_dialog(parent, 290)
         dialog.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
 
         card = QFrame()
-        card.setObjectName('dialogCard')
+        card.setObjectName("dialogCard")
 
         icon_label = QLabel()
         icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         icon_label.setPixmap(QIcon(get_icon_path()).pixmap(54, 54))
 
-        title_label = QLabel('작업이 완료되었습니다.')
-        title_label.setObjectName('dialogTitle')
+        title_label = QLabel("작업이 완료되었습니다.")
+        title_label.setObjectName("dialogTitle")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        message_label = QLabel(f"'{constants.PROCESS_NAME}' 작업이 정상적으로 완료되었습니다.")
-        message_label.setObjectName('dialogMessage')
+        message_label = QLabel(
+            f"'{constants.PROCESS_NAME}' 작업이 정상적으로 완료되었습니다."
+        )
+        message_label.setObjectName("dialogMessage")
         message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        acknowledge_button = QPushButton('확인')
-        acknowledge_button.setObjectName('acknowledgeButton')
+        acknowledge_button = QPushButton("확인")
+        acknowledge_button.setObjectName("acknowledgeButton")
         acknowledge_button.setFixedHeight(34)
         acknowledge_button.setDefault(True)
         acknowledge_button.setFocus()
@@ -243,28 +249,30 @@ def message_box(message_type, parent=None):
         dialog.activateWindow()
         dialog.exec()
 
-    elif message_type == 'exit':
+    elif message_type == "exit":
         dialog = create_dialog(parent, 330)
 
         card = QFrame()
-        card.setObjectName('dialogCard')
+        card.setObjectName("dialogCard")
 
         icon_label = QLabel()
         icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         icon_label.setPixmap(QIcon(get_icon_path()).pixmap(54, 54))
 
-        title_label = QLabel('이 프로그램을 종료하시겠습니까?')
-        title_label.setObjectName('dialogTitle')
+        title_label = QLabel("이 프로그램을 종료하시겠습니까?")
+        title_label.setObjectName("dialogTitle")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        message_label = QLabel(f"'{constants.PROCESS_NAME}'을 종료하시겠습니까?")
-        message_label.setObjectName('dialogMessage')
+        message_label = QLabel(
+            f"'{constants.PROCESS_NAME}'을 종료하시겠습니까?"
+        )
+        message_label.setObjectName("dialogMessage")
         message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        confirm_button = QPushButton('종료')
-        cancel_button = QPushButton('취소')
-        confirm_button.setObjectName('confirmButton')
-        cancel_button.setObjectName('cancelButton')
+        confirm_button = QPushButton("종료")
+        cancel_button = QPushButton("취소")
+        confirm_button.setObjectName("confirmButton")
+        cancel_button.setObjectName("cancelButton")
         confirm_button.setFixedHeight(34)
         cancel_button.setFixedHeight(34)
         confirm_button.setAutoDefault(False)
@@ -293,5 +301,5 @@ def message_box(message_type, parent=None):
             return QMessageBox.StandardButton.Yes
         return QMessageBox.StandardButton.No
     else:
-        QMessageBox.critical(parent, 'error', message_type)
+        QMessageBox.critical(parent, "error", message_type)
     return None

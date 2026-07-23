@@ -25,12 +25,10 @@
 id = cobby.p
 ```
 
-## 🔄 프로세스
-1. **A**
-   - a
+Chrome은 일반 실행과 백그라운드 실행 모두 1920×1080 크기로 시작합니다.
+Selenium과 `urllib3`의 내부 DEBUG 로그는 제외하고 경고 이상만 기록합니다.
 
-2. **B**
-   - b
+## 🔄 프로세스
 
 ## 📂 프로젝트 구조
 ```
@@ -47,7 +45,8 @@ CAU000/
 │   ├── app_ui.py              # 플랫폼별 GUI·아이콘 경로 및 공통 GUI
 │   ├── app_ui_logger.py       # QTextBrowser 로깅 설정
 │   ├── file_util.py           # 파일 유틸리티
-│   └── knw_agit.py            # Agit 업무 자동화
+│   ├── knw_agit.py            # Agit 업무 자동화
+│   └── selenium_util.py            # Chrome WebDriver 유틸리티
 │
 ├── Resource/                  # GUI 및 애플리케이션 리소스
 │   ├── checkmark.svg          # UI에서 사용하는 체크 표시 리소스
