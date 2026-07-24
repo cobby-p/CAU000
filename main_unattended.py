@@ -1,24 +1,18 @@
 # 하위 프로세스 및 패키지 참조 -----------------------------------------------------
-import os
+import logging
 import sys
 import traceback
-import logging
+from pathlib import Path
+
 from Common.email_sender import EmailSender
 from Function.app_logger import configure_logging
 from Service.constants import Constants
 
-
-# 전역변수 ----------------------------------------------------------------------
-try:
-    os.chdir(sys._MEIPASS)
-except:
-    os.chdir(os.getcwd())
-
 # 프로그램 실행 폴더
 if getattr(sys, 'frozen', False):
-    program_dir = os.path.dirname(os.path.abspath(sys.executable))
+    program_dir = Path(sys.executable).resolve().parent
 else:
-    program_dir = os.path.dirname(os.path.abspath(__file__))
+    program_dir = Path(__file__).resolve().parent
 
 # 클래스 초기화
 constants = Constants() # 상수 모듈

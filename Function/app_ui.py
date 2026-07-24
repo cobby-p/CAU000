@@ -1,7 +1,7 @@
 # Function/app_ui.py
 import logging
-import os
 import sys
+from pathlib import Path
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
@@ -16,6 +16,7 @@ from Service.constants import Constants
 
 constants = Constants()
 logger = logging.getLogger(__name__)
+PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 _DIALOG_STYLE = """
     QDialog {
@@ -84,6 +85,13 @@ _DIALOG_STYLE = """
 """
 
 
+def resource_path(*path_parts):
+    """개발 및 PyInstaller 패키징 환경에 맞는 리소스 절대 경로 반환"""
+
+    base_path = Path(getattr(sys, "_MEIPASS", PROJECT_DIR))
+    return base_path.joinpath(*path_parts)
+
+
 def get_icon_path():
     """현재 운영체제에 맞는 애플리케이션 아이콘 경로 반환"""
 
@@ -96,7 +104,7 @@ def get_icon_path():
             f"지원하지 않는 운영체제입니다. platform={sys.platform}"
         )
 
-    return os.path.join("Resource", icon_file)
+    return str(resource_path("Resource", icon_file))
 
 
 def get_platform_name():
@@ -130,7 +138,7 @@ def create_dialog(parent, height):
 
 # [GUI 로드] --------------------------------------------------------------------
 def get_form_class():
-    """현재 운영체제에 맞게 사전 변환된 GUI 클래스를 반환한다."""
+    """현재 운영체제에 맞게 사전 변환된 GUI 클래스를 반환"""
 
     if sys.platform == "darwin":
         from Resource.main_macos_ui import Ui_MainWindow

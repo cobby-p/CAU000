@@ -8,7 +8,7 @@ from Service.constants import Constants
 
 block_cipher = None
 constants = Constants()
-ui_compiler = runpy.run_path(str(Path(SPECPATH) / 'setup' / 'compile_ui.py'))
+ui_compiler = runpy.run_path(str(Path(SPECPATH) / 'Setup' / 'compile_ui.py'))
 ui_compiler['compile_ui']()
 
 
@@ -17,11 +17,8 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('./Common/*', './Common'),
-        ('./Function/*', './Function'),
-        ('./Service/*', './Service'),
-        ('./Resource/checkmark.svg', './Resource'),
-        ('./Resource/icon.icns', './Resource'),
+    ("Resource/checkmark.svg", "Resource"),
+    ("Resource/icon.ico", "Resource"),
     ],
     hiddenimports=[],
     hookspath=[],

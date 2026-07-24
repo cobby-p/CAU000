@@ -3,7 +3,6 @@
 # import knw_license
 
 import logging
-import os
 import subprocess
 import sys
 import time
@@ -27,17 +26,11 @@ from Function.selenium_util import close_chrome_driver
 from Function.selenium_util import create_chrome_driver
 from Service.constants import Constants
 
-# 전역변수 할당 -----------------------------------------------------------------
-try:
-    os.chdir(getattr(sys, "_MEIPASS"))
-except:
-    os.chdir(os.getcwd())
-
 # 프로그램 실행 폴더
 if getattr(sys, "frozen", False):
-    program_dir = os.path.dirname(os.path.abspath(sys.executable))
+    program_dir = Path(sys.executable).resolve().parent
 else:
-    program_dir = os.path.dirname(os.path.abspath(__file__))
+    program_dir = Path(__file__).resolve().parent
 
 # 프로그램명 및 로깅 설정
 constants = Constants()
@@ -50,7 +43,7 @@ def compile_ui_for_development():
     if getattr(sys, "frozen", False):
         return
 
-    compiler_path = Path(program_dir) / "Setup" / "compile_ui.py"
+    compiler_path = program_dir / "Setup" / "compile_ui.py"
     if not compiler_path.is_file():
         raise FileNotFoundError(
             f"GUI 변환 스크립트를 찾을 수 없습니다: {compiler_path}"
@@ -99,11 +92,11 @@ class Worker(QThread):
 class Form(QMainWindow):
     # QMainWindow 설정 및 시작 --------------------------------------------------
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent)
 
         # 클래스 초기화
         self.ui = setup_main_window(self, constants.PROCESS_NAME)
-        config = Config(os.path.join(program_dir, "config.ini"))
+        config = Config(program_dir / "config.ini")
         self.ui.lineEdit_id.setText(config.get("ldap setup", "id"))
         self.text_browser_log_handler = add_text_browser_log_handler(
             self.ui.textBrowser, self
@@ -162,12 +155,7 @@ class Form(QMainWindow):
         self.close()
 
     # 프로그램 종료 시 이벤트 처리
-    def closeEvent(
-        self, event
-    ):  # pyright: ignore[reportIncompatibleMethodOverride]
-        if event is None:
-            return
-
+    def closeEvent(self, event):
         reply = message_box("exit", self)
         if reply == QMessageBox.StandardButton.Yes:
             remove_text_browser_log_handler(self.text_browser_log_handler)
